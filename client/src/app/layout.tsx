@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import type { JSX, ReactNode } from "react";
+import { AuthProvider } from "../context/auth-context";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,18 +19,19 @@ export const metadata: Metadata = {
   description: " A Form Builder System that is designed to streamline the creation, management, and analysis of forms, this system empowers users to build custom forms with drag-and-drop simplicity, collect responses in real-time, and review analytics from a centralized dashboard. Whether for surveys, registrations, feedback, or polls, users can manage all aspects of form lifecycle efficiently.",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: ReactNode }): JSX.Element {
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+       <AuthProvider> {children} </AuthProvider>
       </body>
     </html>
   );
 }
+
+import "./globals.css";
+
+
+
