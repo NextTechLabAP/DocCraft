@@ -19,7 +19,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#e0f2fe] via-[#d8b4fe] to-[#f0abfc] px-6 py-10">
       <div className="w-full max-w-4xl rounded-2xl shadow-2xl bg-white/20 backdrop-blur-lg px-10 py-8 text-center">
-        {/* Branding Header */}
+
         <div className="flex items-center justify-center gap-4 mb-6">
           <img
             src={ntl.src}
