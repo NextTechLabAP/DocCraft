@@ -14,7 +14,7 @@ type AuthContextType = {
   logout: () => void;
 };
 
-const AuthContext = createContext<AuthContextType | null>(null);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element => {
   const [user, setUser] = useState<User | null>(null);
@@ -24,8 +24,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
     if (token) {
       try {
         const decoded = jwtDecode<User>(token);
-        setUser(decoded);
-      } catch {
+        setUser(decoded); 
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (e) {
         localStorage.removeItem("token");
       }
     }

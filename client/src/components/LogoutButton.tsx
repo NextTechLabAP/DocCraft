@@ -7,5 +7,10 @@ export default function LogoutButton() {
   const { logout } = useAuth();
   const router = useRouter();
 
-  return <button onClick={() => { logout(); router.push("/login"); }}>Logout</button>;
+  const handleClick = () => {
+    logout();
+    router.push("/login");
+  };
+
+  return <button onClick={handleClick}>Logout</button>;
 }
