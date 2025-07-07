@@ -5,12 +5,18 @@ import { PrismaService } from '../prisma/prisma.service';
 export class ResponsesService {
     constructor(private readonly prisma: PrismaService) {}
 
-    async createResponse(data: { formId: string; data: any }): Promise<any> {
+    async createResponse(data: { formId: string; answers: { questionId: string; answer: string }[] }): Promise<any> {
         return this.prisma.response.create({
             data: {
                 formId: data.formId,
-                data: data.data,
+                answers: {
+                    create: data.answers.map(ans => ({
+                        questionId: ans.questionId,
+                        answer: ans.answer,
+                    })),
+                },
             },
+            include: { answers: true },
         });
     }
 

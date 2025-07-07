@@ -6,7 +6,7 @@ export class ResponsesController {
     constructor(private readonly responsesService: ResponsesService) {}
 
     @Post()
-    async createResponse(@Body() createResponseDto: { formId: string; data: any }): Promise<any> {
+    async createResponse(@Body() createResponseDto: { formId: string; answers: { questionId: string; answer: string }[] }): Promise<any> {
         return this.responsesService.createResponse(createResponseDto);
     }
 
