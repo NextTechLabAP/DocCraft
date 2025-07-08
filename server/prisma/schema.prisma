@@ -42,10 +42,11 @@ enum QuestionType {
 }
 
 model Response {
-  id      String   @id @default(cuid())
-  form    Form     @relation(fields: [formId], references: [id])
-  formId  String
-  answers ResponseAnswer[]
+  id        String   @id @default(cuid())
+  form      Form     @relation(fields: [formId], references: [id])
+  formId    String
+  answers   ResponseAnswer[]
+  createdAt DateTime @default(now())
 }
 
 model ResponseAnswer {
