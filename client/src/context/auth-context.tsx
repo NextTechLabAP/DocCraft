@@ -4,7 +4,8 @@ import { createContext, JSX, useContext, useEffect, useState, type ReactNode } f
 import { jwtDecode } from "jwt-decode";
 
 type User = {
-  id: string;
+  id?: string;
+  sub?: string;
   email: string;
 };
 

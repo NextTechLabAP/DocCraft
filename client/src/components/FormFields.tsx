@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import {
   Type,
   Hash,
@@ -22,15 +22,16 @@ interface Field {
   sizeUnit?: string;
 }
 
+export type { Field };
+
 interface FieldType {
   icon: React.ComponentType<{ size: number; className?: string }>;
   label: string;
   type: string;
 }
 
-const FormFields: React.FC = () => {
-  const [fields, setFields] = useState<Field[]>([]);
-  const [focusedField, setFocusedField] = useState<number | null>(null);
+const FormFields: React.FC<{ fields: Field[]; setFields: (fields: Field[]) => void }> = ({ fields, setFields }) => {
+  const [focusedField, setFocusedField] = React.useState<number | null>(null);
 
   const fieldTypes: FieldType[] = [
     { icon: Type, label: "Text", type: "text" },
@@ -110,10 +111,27 @@ const FormFields: React.FC = () => {
     setFields(newFields);
   };
 
+  // Map UI field types to backend QuestionType
+  const mapTypeToBackend = (type: string) => {
+    switch (type) {
+      case "number": return "int";
+      case "text": return "string";
+      case "textarea": return "string";
+      case "checkbox": return "boolean";
+      case "radio": return "string";
+      case "dropdown": return "string";
+      case "date": return "string";
+      default: return "string";
+    }
+  };
+
   return (
     <div className="bg-white shadow-md p-4 rounded-lg mb-6 flex font-roboto">
       <div className="w-1/4 pr-4">
         <h3 className="text-lg font-semibold text-gray-700 mb-4 font-roboto">FORM FIELDS</h3>
+        <div className="mb-4">
+          {/* Removed form title input */}
+        </div>
         <div className="space-y-3">
           {fieldTypes.map((fieldType) => (
             <button
