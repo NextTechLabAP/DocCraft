@@ -62,12 +62,83 @@ const PublicFormPage = () => {
       {form.questions.map((q: any) => (
         <div key={q.id} className="mb-4">
           <label className="block font-medium mb-1">{q.title}</label>
-          <input
-            type="text"
-            className="w-full border p-2 rounded"
-            value={answers[q.id] || ""}
-            onChange={e => handleChange(q.id, e.target.value)}
-          />
+          {q.type === 'boolean' && Array.isArray(q.options) && q.options.length > 0 ? (
+            q.options.map((option: string, idx: number) => (
+              <label key={idx} className="flex items-center mb-1">
+                <input
+                  type="checkbox"
+                  className="mr-2"
+                  checked={Array.isArray(answers[q.id]) ? answers[q.id].includes(option) : false}
+                  onChange={e => {
+                    setAnswers(prev => {
+                      const prevArr = Array.isArray(prev[q.id]) ? [...prev[q.id]] : [];
+                      if (e.target.checked) {
+                        return { ...prev, [q.id]: [...prevArr, option] };
+                      } else {
+                        return { ...prev, [q.id]: prevArr.filter((o: string) => o !== option) };
+                      }
+                    });
+                  }}
+                />
+                {option}
+              </label>
+            ))
+          ) : q.type === 'string' && Array.isArray(q.options) && q.options.length > 0 ? (
+            // Render radio buttons for string type with options
+            q.options.map((option: string, idx: number) => (
+              <label key={idx} className="flex items-center mb-1">
+                <input
+                  type="radio"
+                  className="mr-2"
+                  name={q.id}
+                  checked={answers[q.id] === option}
+                  onChange={() => setAnswers(prev => ({ ...prev, [q.id]: option }))}
+                />
+                {option}
+              </label>
+            ))
+          ) : q.type === 'dropdown' && Array.isArray(q.options) && q.options.length > 0 ? (
+            <select
+              className="w-full border p-2 rounded"
+              value={answers[q.id] || ''}
+              onChange={e => setAnswers(prev => ({ ...prev, [q.id]: e.target.value }))}
+            >
+              <option value="" disabled>Select an option</option>
+              {q.options.map((option: string, idx: number) => (
+                <option key={idx} value={option}>{option}</option>
+              ))}
+            </select>
+          ) : q.type === 'file' ? (
+            <input
+              type="file"
+              className="w-full border p-2 rounded"
+              onChange={e => {
+                const file = e.target.files && e.target.files[0];
+                setAnswers(prev => ({ ...prev, [q.id]: file }));
+              }}
+            />
+          ) : q.type === 'string' && Array.isArray(q.options) && q.options.length === 0 ? (
+            <input
+              type="text"
+              className="w-full border p-2 rounded"
+              value={answers[q.id] || ""}
+              onChange={e => handleChange(q.id, e.target.value)}
+            />
+          ) : q.type === 'int' || q.type === 'float' ? (
+            <input
+              type="number"
+              className="w-full border p-2 rounded"
+              value={answers[q.id] || ""}
+              onChange={e => handleChange(q.id, e.target.value)}
+            />
+          ) : (
+            <input
+              type="text"
+              className="w-full border p-2 rounded"
+              value={answers[q.id] || ""}
+              onChange={e => handleChange(q.id, e.target.value)}
+            />
+          )}
         </div>
       ))}
 

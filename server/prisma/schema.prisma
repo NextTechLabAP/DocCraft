@@ -17,6 +17,10 @@ model User {
 model Form {
   id         String     @id @default(cuid())
   title      String
+  description String?
+   visibility  Visibility? @default(PUBLIC)
+  responseLimit Int?  @default(100)
+  deadline   DateTime?
   createdAt  DateTime   @default(now())
   creator    User?      @relation("UserForms", fields: [creatorId], references: [id])
   creatorId  String?
@@ -28,6 +32,7 @@ model Question {
   id       String       @id @default(cuid())
   title    String
   type     QuestionType
+  options  Json?
   answer   Json?        // Restored optional answer field
   form     Form         @relation(fields: [formId], references: [id])
   formId   String
@@ -40,6 +45,13 @@ enum QuestionType {
   string
   boolean
 }
+
+enum Visibility {
+  PUBLIC
+  PRIVATE
+}
+
+
 
 model Response {
   id        String   @id @default(cuid())

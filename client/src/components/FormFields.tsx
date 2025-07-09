@@ -14,10 +14,11 @@ import {
 } from "lucide-react";
 
 interface Field {
+  id?: string;
   type: string;
   question: string;
   options: string[];
-  selectedOption?: string;
+  selectedOption?: string | string[];
   sizeLimit?: string;
   sizeUnit?: string;
 }
@@ -222,13 +223,39 @@ const FormFields: React.FC<{ fields: Field[]; setFields: (fields: Field[]) => vo
 
                   {isOptionType && (
                     <div>
-                      {field.options.map((option, optIndex) => (
+                      {/* Option text inputs for editing */}
+                      {field.options && field.options.map((option, optIndex) => (
                         <div key={optIndex} className="flex items-center mb-2">
-                          {field.type !== "dropdown" && (
+                          {/* Interactive preview for checkbox, radio, dropdown */}
+                          {field.type === "checkbox" && (
                             <input
-                              type={field.type}
+                              type="checkbox"
                               className="mr-2"
-                              name={'group-${index}'}
+                              checked={Array.isArray(field.selectedOption) ? field.selectedOption.includes(option) : false}
+                              onChange={e => {
+                                const newFields = [...fields];
+                                let selected = Array.isArray(field.selectedOption) ? [...field.selectedOption] : [];
+                                if (e.target.checked) {
+                                  selected.push(option);
+                                } else {
+                                  selected = selected.filter(o => o !== option);
+                                }
+                                newFields[index].selectedOption = selected;
+                                setFields(newFields);
+                              }}
+                            />
+                          )}
+                          {field.type === "radio" && (
+                            <input
+                              type="radio"
+                              className="mr-2"
+                              name={`group-${index}`}
+                              checked={field.selectedOption === option}
+                              onChange={() => {
+                                const newFields = [...fields];
+                                newFields[index].selectedOption = option;
+                                setFields(newFields);
+                              }}
                             />
                           )}
                           <input
@@ -251,12 +278,17 @@ const FormFields: React.FC<{ fields: Field[]; setFields: (fields: Field[]) => vo
                       >
                         Add Option
                       </button>
-                      {field.type === "dropdown" && (
+                      {/* Interactive preview for dropdown */}
+                      {field.type === "dropdown" && field.options && (
                         <div className="mt-2">
                           <select
                             className="w-full p-2 border rounded focus:ring-2 focus:ring-indigo-200 hover:bg-gray-50 hover:shadow-md transition duration-200 font-roboto"
                             value={field.selectedOption || ""}
-                            onChange={(e) => handleSelectedOptionChange(index, e.target.value)}
+                            onChange={e => {
+                              const newFields = [...fields];
+                              newFields[index].selectedOption = e.target.value;
+                              setFields(newFields);
+                            }}
                           >
                             <option value="" disabled>
                               Select an option

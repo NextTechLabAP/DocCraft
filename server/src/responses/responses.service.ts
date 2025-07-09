@@ -23,6 +23,13 @@ export class ResponsesService {
     async getResponsesByFormId(formId: string): Promise<any[]> {
         return this.prisma.response.findMany({
             where: { formId },
+            include: {
+                answers: {
+                    include: {
+                        question: true,
+                    },
+                },
+            },
         });
     }
 }

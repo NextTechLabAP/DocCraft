@@ -36,6 +36,7 @@ const EditPage = () => {
           id: q.id,
           question: q.title,
           type: mapBackendTypeToUI(q.type),
+          options: ["checkbox", "radio", "dropdown"].includes(mapBackendTypeToUI(q.type)) ? (q.options || []) : [],
         }));
         setFields(mappedFields);
       } catch (e) {
@@ -130,7 +131,6 @@ const EditPage = () => {
         <SubmitButton
           onClick={handleUpdate}
           disabled={updating || !formTitle || fields.length === 0}
-          label="Update Form"
         />
         {submitResult && (
           <div className={`mt-2 text-sm ${submitResult.includes("success") ? "text-green-600" : "text-red-600"}`}>
