@@ -5,10 +5,9 @@ import Header from '@/components/Header';
 import FormSettings from '@/components/FormSettings';
 import FormFields from '@/components/FormFields';
 import SubmitButton from '@/components/SubmitButton';
-
-// Import Field type from FormFields
 import type { Field } from '@/components/FormFields';
 import { useAuth } from '@/context/auth-context';
+import { useRouter } from 'next/navigation';
 
 const CreatePage = () => {
   const [formTitle, setFormTitle] = useState("");
@@ -21,8 +20,8 @@ const CreatePage = () => {
   const [submitResult, setSubmitResult] = useState<string | null>(null);
 
   const { user } = useAuth();
+  const router = useRouter();
 
-  // Map UI field types to backend QuestionType
   const mapTypeToBackend = (type: string) => {
     switch (type) {
       case "number": return "int";
@@ -39,26 +38,31 @@ const CreatePage = () => {
   const handleSubmit = async () => {
     setSubmitting(true);
     setSubmitResult(null);
+
     try {
       const questions = fields.map((f: any) => ({
         title: f.question,
         type: mapTypeToBackend(f.type),
       }));
+
       const payload: any = {
         title: formTitle,
-        description: formDescription,
-        visibility,
-        responseLimit,
-        deadline,
         questions,
+        visibility,
       };
+
+      if (formDescription) payload.description = formDescription;
+      if (responseLimit) payload.responseLimit = responseLimit;
+      if (deadline) payload.deadline = deadline;
       const creatorId = user?.id || user?.sub;
       if (creatorId) payload.creatorId = creatorId;
+
       const res = await fetch("http://localhost:3000/forms", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+
       if (res.ok) {
         setSubmitResult("Form created successfully!");
         setFields([]);
@@ -67,6 +71,10 @@ const CreatePage = () => {
         setVisibility("Public");
         setResponseLimit(100);
         setDeadline("");
+
+        setTimeout(() => {
+          router.push("/dashboard/your-forms");
+        }, 1500);
       } else {
         setSubmitResult("Failed to create form.");
       }
@@ -96,7 +104,9 @@ const CreatePage = () => {
       <div className="mt-6">
         <SubmitButton onClick={handleSubmit} disabled={submitting || !formTitle || fields.length === 0} />
         {submitResult && (
-          <div className={`mt-2 text-sm ${submitResult.includes("success") ? "text-green-600" : "text-red-600"}`}>{submitResult}</div>
+          <div className={`mt-2 text-sm ${submitResult.includes("success") ? "text-green-600" : "text-red-600"}`}>
+            {submitResult}
+          </div>
         )}
       </div>
     </div>
@@ -104,3 +114,4 @@ const CreatePage = () => {
 };
 
 export default CreatePage;
+  

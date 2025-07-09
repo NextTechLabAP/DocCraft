@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import FormsTable from "@/components/forms/FormsTable";
 import { useAuth } from '@/context/auth-context';
@@ -15,21 +16,11 @@ function YourFormsPage() {
     try {
       const res = await fetch(`http://localhost:3000/forms/user/${userId}`);
       if (!res.ok) {
-        let errMsg = "Failed to fetch forms";
-        try {
-          const errData = await res.json();
-          if (Array.isArray(errData)) {
-            errMsg = errData.map((err: any) => err.message || String(err)).join(', ');
-          } else if (typeof errData === 'object' && errData.message) {
-            errMsg = errData.message;
-          } else {
-            errMsg = String(errData);
-          }
-        } catch {}
-        throw new Error(errMsg);
+        const errData = await res.json();
+        throw new Error(errData?.message || "Failed to fetch forms");
       }
+
       const data = await res.json();
-      // Map backend fields to FormsTable fields
       const mapped = data.map((form: any) => ({
         id: form.id,
         title: form.title,
@@ -37,18 +28,12 @@ function YourFormsPage() {
         responses: form.responses ? form.responses.length : 0,
         created: form.createdAt ? new Date(form.createdAt).toLocaleDateString() : "",
         status: form.status || "enabled",
+        shareUrl: `http://localhost:3001/forms/${form.id}` // Adjust domain if needed
       }));
+
       setForms(mapped);
     } catch (e: any) {
-      let errorString = "Unknown error";
-      if (Array.isArray(e)) {
-        errorString = e.map((err: any) => err?.message || String(err)).join(', ');
-      } else if (typeof e === 'object' && e !== null && 'message' in e) {
-        errorString = String(e.message);
-      } else {
-        errorString = String(e);
-      }
-      setError(String(errorString));
+      setError(e.message || "Unknown error");
     }
   };
 
@@ -58,11 +43,18 @@ function YourFormsPage() {
       setLoading(false);
       return;
     }
+
     setLoading(true);
     fetchForms(userId).finally(() => setLoading(false));
-    const interval = setInterval(() => fetchForms(userId), 5000); // Poll every 5 seconds
+    const interval = setInterval(() => fetchForms(userId), 5000);
     return () => clearInterval(interval);
   }, [userId]);
+
+  const handleShareForm = (formUrl: string) => {
+    navigator.clipboard.writeText(formUrl)
+      .then(() => alert("Shareable link copied to clipboard!"))
+      .catch(() => alert("Failed to copy link."));
+  };
 
   if (!userId) {
     return <div className="text-center text-gray-500 mt-10">Please log in to view your forms.</div>;
@@ -77,7 +69,10 @@ function YourFormsPage() {
         ) : error ? (
           <div className="text-center text-red-500">{error}</div>
         ) : (
-          <FormsTable forms={forms} />
+          <FormsTable
+            forms={forms}
+            onShare={handleShareForm}
+          />
         )}
       </div>
     </div>
