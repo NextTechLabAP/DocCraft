@@ -40,7 +40,7 @@ export class FormsService {
   async getFormByUser(userId: string): Promise<any> {
     return this.prisma.form.findMany({
       where: { creatorId: userId },
-      include: { questions: true },
+      include: { questions: true, responses: true },
     });
   }
 

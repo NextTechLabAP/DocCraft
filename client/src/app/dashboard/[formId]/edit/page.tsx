@@ -86,6 +86,7 @@ const EditPage = () => {
           id: f.id, // Optional: use this to match existing questions
           title: f.question,
           type: mapTypeToBackend(f.type),
+          options: ["checkbox", "radio", "dropdown"].includes(f.type) ? f.options : undefined,
         })),
       };
 

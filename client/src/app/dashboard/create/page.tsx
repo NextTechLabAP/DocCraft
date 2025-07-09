@@ -43,6 +43,7 @@ const CreatePage = () => {
       const questions = fields.map((f: any) => ({
         title: f.question,
         type: mapTypeToBackend(f.type),
+        options: ["checkbox", "radio", "dropdown"].includes(f.type) ? f.options : undefined,
       }));
 
       const payload: any = {
