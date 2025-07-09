@@ -57,17 +57,21 @@ function YourFormsPage() {
   };
 
   if (!userId) {
-    return <div className="text-center text-gray-500 mt-10">Please log in to view your forms.</div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-100 via-purple-200 to-purple-300 flex items-center justify-center">
+        <div className="text-center text-lg font-semibold text-black mt-10">Please log in to view your forms.</div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-tr from-[#e1e6fa] to-[#e7baff] py-10 px-8">
+    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-purple-200 to-purple-300 py-10 px-8">
       <div className="max-w-4xl mx-auto">
-        <h2 className="text-2xl font-bold text-[#191c24] mb-6">My Forms</h2>
+        <h2 className="text-3xl font-bold text-black mb-6">My Forms</h2>
         {loading ? (
-          <div className="text-center text-gray-500">Loading...</div>
+          <div className="text-center text-lg font-semibold text-black">Loading...</div>
         ) : error ? (
-          <div className="text-center text-red-500">{error}</div>
+          <div className="text-center text-lg font-semibold text-black">{error}</div>
         ) : (
           <FormsTable
             forms={forms}

@@ -23,23 +23,33 @@ const PreviewPage = () => {
     fetchForm();
   }, [formId]);
 
-  if (loading) return <div className="p-6">Loading preview...</div>;
-  if (!form) return <div className="p-6 text-red-500">Form not found</div>;
+  if (loading) return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-purple-200 to-purple-300 flex items-center justify-center">
+      <div className="p-6 text-lg font-semibold text-black">Loading preview...</div>
+    </div>
+  );
+  if (!form) return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-purple-200 to-purple-300 flex items-center justify-center">
+      <div className="p-6 text-lg font-semibold text-black">Form not found</div>
+    </div>
+  );
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold mb-2">{form.title}</h1>
-      <p className="text-gray-600 mb-6">{form.description}</p>
-      <ul className="space-y-4">
-        {form.questions.map((q: any, index: number) => (
-          <li key={q.id} className="border p-4 rounded shadow-sm bg-white">
-            <p className="font-semibold">
-              {index + 1}. {q.title}
-            </p>
-            <p className="text-sm text-gray-500">Type: {q.type}</p>
-          </li>
-        ))}
-      </ul>
+    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-purple-200 to-purple-300 p-6">
+      <div className="max-w-3xl mx-auto">
+        <h1 className="text-3xl font-bold mb-6 text-black">{form.title}</h1>
+        <p className="text-lg mb-6 text-black">{form.description}</p>
+        <ul className="space-y-4">
+          {form.questions.map((q: any, index: number) => (
+            <li key={q.id} className="border border-purple-300 p-4 rounded-lg shadow-lg bg-white bg-opacity-90 hover:shadow-xl transition-shadow duration-300">
+              <p className="text-xl font-semibold text-black">
+                {index + 1}. {q.title}
+              </p>
+              <p className="text-base text-black">Type: {q.type}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };
